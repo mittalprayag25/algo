@@ -161,8 +161,8 @@ const json = {
           itemname: 'Voyager of the Seas - Royal Caribbean International',
         },
         {
-          systemid: 'D',
-          itemname: 'Voyager of the Seas - Royal Caribbean International',
+          systemid: 'S',
+          itemname: 'Red',
         },
         {
           systemid: 'M',
@@ -182,41 +182,34 @@ http
   .listen(8080);
 
 function makeList(list) {
-  const isRed = true;
+  const isRed = false;
   const isPrestige = true;
   const sortedList = sortDeals(list);
-  // const redDeals = fetchDealsBasedOnSystemId(sortedList, 'S');
-  // const prestigeDeals = fetchDealsBasedOnSystemId(sortedList, 'M');
-  // const birthdayDeals = fetchDealsBasedOnSystemId(sortedList, 'B');
-  // const allNonPAndRDeals = fetchAllNonPrestigeAndRedDeals(sortedList);
-  // return composeConditionalList(
-  //   redDeals,
-  //   prestigeDeals,
-  //   birthdayDeals,
-  //   allNonPAndRDeals
-  // );
-  const redDeals = groupCategoriesByType(sortedList, 'S');
-  const prestigeDeals = groupCategoriesByType(sortedList, 'M');
 
-  //above 2 used only for red and prestige
-  const birthdayDeals = groupCategoriesByType(sortedList, 'B');
+  const dealsWithRedPrestigeFilter = filterDeals(sortedList, isRed, isPrestige);
 
-  const allDealsCategoriesWithoutRedAndPrestige = fetchAllNonPrestigeAndRedDealsCategories(
-    sortedList
+  const redCategoryDeals = groupCategoriesByType(
+    dealsWithRedPrestigeFilter,
+    'S'
+  );
+  const prestigeCategoryDeals = groupCategoriesByType(
+    dealsWithRedPrestigeFilter,
+    'M'
+  );
+  const birthdayCategoryDeals = groupCategoriesByType(
+    dealsWithRedPrestigeFilter,
+    'B'
   );
 
-  //console.log(sortedList);
-  const allDealsWithoutRedAndPrestige = filterDeals(
-    allDealsCategoriesWithoutRedAndPrestige,
-    isRed,
-    isPrestige
+  const dealCategoriesWithoutRedPrestigeBirthday = fetchDealCategoriesWithoutRedPrestigeBirthday(
+    dealsWithRedPrestigeFilter
   );
 
   return composeConditionalList(
-    isRed && redDeals,
-    isPrestige && prestigeDeals,
-    birthdayDeals,
-    allDealsWithoutRedAndPrestige
+    isRed && redCategoryDeals,
+    isPrestige && prestigeCategoryDeals,
+    birthdayCategoryDeals,
+    dealCategoriesWithoutRedPrestigeBirthday
   );
 }
 function sortDeals(list) {
@@ -238,22 +231,14 @@ function filterDeals(arr, isRed = true, isPrestige = true) {
   });
 }
 
-/** */
 function groupCategoriesByType(arr, type) {
   return arr.filter((a) => a.systemid === type);
 }
 
-// function fetchDealsBasedOnSystemId(arr, type) {
-//   return arr
-//     .filter((a) => a.systemid === type)
-//     .map((b) => {
-//       b.items = b.items.filter((c) => c.systemid === type);
-//       return b;
-//     });
-// }
-
-function fetchAllNonPrestigeAndRedDealsCategories(arr) {
-  return arr.filter((a) => a.systemid != 'S' && a.systemid != 'M');
+function fetchDealCategoriesWithoutRedPrestigeBirthday(arr) {
+  return arr.filter(
+    (a) => a.systemid != 'S' && a.systemid != 'M' && a.systemid != 'B'
+  );
 }
 
 function composeConditionalList(redList, prestigeList, birthdayDeals, list) {
