@@ -11,15 +11,15 @@ const json = {
       items: [
         {
           systemid: 'B',
-          itemname: 'Voyager of the Seas - Royal Caribbean International',
-        },
-        {
-          systemid: 'B',
-          itemname: 'Voyager of the Seas - Royal Caribbean International',
+          itemname: 'B CBT',
         },
         {
           systemid: 'S',
-          itemname: 'Red',
+          itemname: 'RED CBT',
+        },
+        {
+          systemid: 'S',
+          itemname: 'Red CBT',
         },
       ],
     },
@@ -32,11 +32,11 @@ const json = {
       items: [
         {
           systemid: 'M',
-          itemname: 'Voyager of the Seas - Royal Caribbean International',
+          itemname: 'Prestige CM',
         },
         {
           systemid: 'M',
-          itemname: 'Voyager of the Seas - Royal Caribbean International',
+          itemname: 'Prestige CM',
         },
         {
           systemid: 'S',
@@ -73,15 +73,11 @@ const json = {
       details: '',
       items: [
         {
-          systemid: 'D',
+          systemid: 'M',
           itemname: 'Voyager of the Seas - Royal Caribbean International',
         },
         {
-          systemid: 'D',
-          itemname: 'Voyager of the Seas - Royal Caribbean International',
-        },
-        {
-          systemid: 'D',
+          systemid: 'S',
           itemname: 'Voyager of the Seas - Royal Caribbean International',
         },
       ],
@@ -182,21 +178,18 @@ http
   .listen(8080);
 
 function makeList(list) {
-  const isRed = false;
+  const isRed = true;
   const isPrestige = true;
   const sortedList = sortDeals(list);
 
   const dealsWithRedPrestigeFilter = filterDeals(sortedList, isRed, isPrestige);
 
-  const redCategoryDeals = groupCategoriesByType(
-    dealsWithRedPrestigeFilter,
-    'S'
-  );
-  const prestigeCategoryDeals = groupCategoriesByType(
+  const redCategoryDeals = groupBySystemId(dealsWithRedPrestigeFilter, 'S');
+  const prestigeCategoryDeals = groupBySystemId(
     dealsWithRedPrestigeFilter,
     'M'
   );
-  const birthdayCategoryDeals = groupCategoriesByType(
+  const birthdayCategoryDeals = groupBySystemId(
     dealsWithRedPrestigeFilter,
     'B'
   );
@@ -218,26 +211,27 @@ function sortDeals(list) {
 
 function filterDeals(arr, isRed = true, isPrestige = true) {
   return arr.map((b) => {
-    b.items = b.items.filter((a) => {
-      if (a.systemid !== 'S' && a.systemid !== 'M') {
-        return a;
-      } else if (isRed && a.systemid === 'S') {
-        return a;
-      } else if (isPrestige && a.systemid === 'M') {
-        return a;
-      }
-    });
+    b.items = b.items.filter(
+      (a) =>
+        (a.systemid !== 'S' && a.systemid !== 'M') ||
+        (isRed && a.systemid === 'S') ||
+        (isPrestige && a.systemid === 'M')
+    );
     return b;
   });
 }
 
-function groupCategoriesByType(arr, type) {
+function groupBySystemId(arr, type) {
   return arr.filter((a) => a.systemid === type);
 }
 
 function fetchDealCategoriesWithoutRedPrestigeBirthday(arr) {
   return arr.filter(
-    (a) => a.systemid != 'S' && a.systemid != 'M' && a.systemid != 'B'
+    (a) =>
+      a.systemid != 'S' &&
+      a.systemid != 'M' &&
+      a.systemid != 'B' &&
+      a.items.length > 0
   );
 }
 
