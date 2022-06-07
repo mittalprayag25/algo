@@ -18,7 +18,7 @@ const json = {
           itemname: 'RED CBT',
         },
         {
-          systemid: 'S',
+          systemid: 'M',
           itemname: 'Red CBT',
         },
       ],
@@ -51,7 +51,7 @@ const json = {
           itemname: 'Prestige CM',
         },
         {
-          systemid: 'M',
+          systemid: 'B',
           itemname: 'Prestige CM',
         },
         {
@@ -226,31 +226,25 @@ function makeList(list) {
 
 function sortDealsWithSystemId(list) {
   let modifiedList = makeList(list);
-  for (let i = 0; i < modifiedList.length - 1; i++) {
+  console.log('itemsDealsSorting', modifiedList);
+  for (let i = 0; i < modifiedList.length; i++) {
     let itemsDealsSorting = orderedList(modifiedList[i].items);
+
     modifiedList[i].items = itemsDealsSorting;
   }
   return modifiedList;
 }
 
-function orderedList(list) {
+function orderedList(data) {
   // const sortedList = sortDeals(list); need to check
-  const sortedList = list;
-  const sDeals = groupBySystemId(sortedList, 'S');
-  const mDeals = groupBySystemId(sortedList, 'M');
-  const bDeals = groupBySystemId(sortedList, 'B');
-  const lDeals = groupBySystemId(sortedList, 'L');
-  const dDeals = groupBySystemId(sortedList, 'D');
-  const otherDeals = fetchDealsWithoutRequiredCategories(sortedList);
-
-  return composeConditionalDealsList(
-    sDeals,
-    mDeals,
-    bDeals,
-    lDeals,
-    dDeals,
-    otherDeals
-  );
+  const sortedList = data;
+  const s = groupBySystemId(data, 'S');
+  const m = groupBySystemId(data, 'M');
+  const b = groupBySystemId(data, 'B');
+  const l = groupBySystemId(data, 'L');
+  const d = groupBySystemId(data, 'D');
+  const remainingDeals = fetchDealsWithoutRequiredCategories(data);
+  return composeConditionalDealsList(m)(s)(l)(d)(remainingDeals)(b);
 }
 
 function sortDeals(list) {
@@ -286,11 +280,11 @@ function fetchDealCategoriesWithoutRedPrestigeBirthday(arr) {
 function fetchDealsWithoutRequiredCategories(arr) {
   return arr.filter(
     (a) =>
-      a.systemid != 'S' &&
-      a.systemid != 'M' &&
-      a.systemid != 'B' &&
-      a.systemid != 'L' &&
-      a.systemid != 'D'
+      a.systemid !== 'S' &&
+      a.systemid !== 'M' &&
+      a.systemid !== 'B' &&
+      a.systemid !== 'L' &&
+      a.systemid !== 'D'
   );
 }
 function composeConditionalList(redList, prestigeList, birthdayDeals, list) {
@@ -306,31 +300,33 @@ function composeConditionalList(redList, prestigeList, birthdayDeals, list) {
   return list;
 }
 
-/**
- *
- * @param {*} sList
- * @param {*} mList
- * @param {*} bList
- * @param {*} lList
- * @param {*} dList
- * @param {*} others
- */
-function composeConditionalDealsList(sList, mList, bList, lList, dList, list) {
-  // Adding data in Stack fo LIFO applies
-  if (bList && bList.length > 0) {
-    list.unshift(...bList);
+const composeConditionalDealsList = (a) => (b) => (c) => (d) => (e) => (f) => {
+  const list = [];
+  if (a && a.length > 0) {
+    list.push(...a);
   }
-  if (dList && dList.length > 0) {
-    list.unshift(...dList);
+  if (b && b.length > 0) {
+    list.push(...b);
   }
-  if (lList && lList.length > 0) {
-    list.unshift(...lList);
+  if (c && c.length > 0) {
+    list.push(...c);
   }
-  if (sList && sList.length > 0) {
-    list.unshift(...sList);
+  if (d && d.length > 0) {
+    list.push(...d);
   }
-  if (mList && mList.length > 0) {
-    list.unshift(...mList);
+  if (e && e.length > 0) {
+    list.push(...e);
+  }
+  if (f && f.length > 0) {
+    list.push(...f);
+  }
+
+  return list;
+};
+
+const addDeals = (arr, list) => {
+  if (arr && arr.length > 0) {
+    list.push(...arr);
   }
   return list;
-}
+};
