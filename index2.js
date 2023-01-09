@@ -301,26 +301,13 @@ function composeConditionalList(redList, prestigeList, birthdayDeals, list) {
 }
 
 const composeConditionalDealsList = (a) => (b) => (c) => (d) => (e) => (f) => {
-  const list = [];
-  if (a && a.length > 0) {
-    list.push(...a);
-  }
-  if (b && b.length > 0) {
-    list.push(...b);
-  }
-  if (c && c.length > 0) {
-    list.push(...c);
-  }
-  if (d && d.length > 0) {
-    list.push(...d);
-  }
-  if (e && e.length > 0) {
-    list.push(...e);
-  }
-  if (f && f.length > 0) {
-    list.push(...f);
-  }
-
+  let list = [];
+  list = addDeals(a, list);
+  list = addDeals(b, list);
+  list = addDeals(c, list);
+  list = addDeals(d, list);
+  list = addDeals(e, list);
+  list = addDeals(f, list);
   return list;
 };
 

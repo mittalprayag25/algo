@@ -4,39 +4,90 @@ const { reverse } = require('dns');
 http
   .createServer(function(req, res) {
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    let reverseOfArray = reverseArray([1, 2, 3, 4, 5, 6, 7], 2, 5);
-    let rotateArray = leftRotateArray([1, 2, 3, 4, 5, 6, 7]);
-    res.end('val:' + rotateArray);
+    res.end('val:' + createDealArr(a));
   })
   .listen(8080);
 
-function reverseArray(array, start, end) {
-  while (start < end) {
-    let temp = array[start];
-    array[start] = array[end];
-    array[end] = temp;
-    start++;
-    end--;
-  }
-  return array;
-}
+let a = [
+  {
+    categoryId: 'M',
+    systemId: 'M',
+    categoryName: 'Merchant Promotion (RR)',
+    items: [
+      {
+        itemName: 'delight',
+      },
+    ],
+  },
+  {
+    categoryId: 'B',
+    systemId: 'S',
+    categoryName: 'Birthday Treats 2011 (RR)',
+    items: [],
+  },
+  {
+    categoryId: 'B',
+    systemId: 'S',
+    categoryName: 'Merchant Promotion (RR)',
+    items: [
+      {
+        itemName: 'delight',
+      },
+    ],
+  },
+  {
+    categoryId: 'B',
+    systemId: 'B',
+    categoryName: 'Birthday Treats 2011 (RR or RP)',
+    items: [],
+  },
+];
+const createCategoryMap = (arr) => {
+  const categoryArr = arr.map((item) => {
+    return item.categoryName;
+  });
 
-function leftRotateArray(array) {
-  const end = array.length - 1;
-  let temp = array[0];
-  for (let i = 0; i < end; i++) {
-    array[i] = array[i + 1];
-  }
-  array[end] = temp;
+  const dealsArrWithSystemID = addSystemIdInDeals(arr);
+  console.log(JSON.stringify(dealsArrWithSystemID));
+  let uniqueCategories = [...new Set(categoryArr)];
+  let map = new Map();
 
-  return array;
-}
-
-function rotate(arr) {
-  let end = arr.length - 1;
-  for (let i = 0; i < end; i++) {
-    let temp = arr[i];
-    arr[i] = arr[i + 1];
-    arr[end] = temp;
+  for (let i = 0; i < uniqueCategories.length; i++) {
+    for (let j = 0; j < dealsArrWithSystemID.length; j++) {
+      if (dealsArrWithSystemID[j].categoryName === uniqueCategories[i]) {
+        if (!map.get(dealsArrWithSystemID[j].categoryName)) {
+          map.set(dealsArrWithSystemID[j].categoryName, [
+            ...dealsArrWithSystemID[j].items,
+          ]);
+        } else {
+          const it = map.get(dealsArrWithSystemID[j].categoryName);
+          map.set(dealsArrWithSystemID[j].categoryName, [
+            ...it,
+            ...dealsArrWithSystemID[j].items,
+          ]);
+        }
+      }
+    }
   }
-}
+  return map;
+};
+
+const addSystemIdInDeals = (arr) => {
+  arr.map((obj) => {
+    return obj.items.map((item) => {
+      item.systemId = obj.systemId;
+      return item;
+    });
+  });
+  return arr;
+};
+
+const createDealArr = (array) => {
+  const map = createCategoryMap(array);
+  const arr = [];
+  map.forEach((value, key) => {
+    arr.push({ categoryName: key, items: value });
+  });
+  console.log(JSON.stringify(arr));
+  return arr;
+};
