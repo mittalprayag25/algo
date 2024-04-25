@@ -2,7 +2,6 @@ export const rotateLeft = (arr) => {
     let start = arr[0];
     let size = arr.length;
     for (let index = 0; index < size; index++) {
-        console.log("imdex", index, index + 1, arr[index + 1]);
         arr[index] = arr[index + 1];
     }
     arr[size - 1] = start;
