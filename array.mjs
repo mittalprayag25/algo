@@ -4,8 +4,9 @@ import { linearSearch } from './array/linearSearcharray.mjs';
 import { binarySearch, recursiveBinarySearch } from './array/binarySearchArray.mjs';
 import { reverseArray, reverseArrayUsingStack } from './array/reverseArray.mjs';
 import { rotateLeft, leftRotateByN, rotateLeftByNUsingbigOn } from './array/rotationArray.mjs';
-import { insertAtLastKey, insertAtIndex } from './array/insertArray.mjs';
-import { deleteFromIndex, deleteFromLast, deleteFromStart } from './array/deleteOperation.mjs';
+import { insertAtLastKey, insertAtIndex } from './array/insertArrayUnsorted.mjs';
+import { insertItemInSortedArray } from './array/insertArraySorted.mjs';
+import { deleteFromIndex, deleteFromLast, deleteFromStart } from './array/deleteOperationUnsorted.mjs';
 
 http
     .createServer(function (req, res) {
@@ -24,9 +25,13 @@ http
         let leftRotateByNResult = leftRotateByN([23, 10, 54, 46, 65, 76], 3);
         let rotateLeftByNUsingbigOnResult = rotateLeftByNUsingbigOn([23, 10, 54, 46, 65, 76], 2);
 
-        // Insertion in Array
+        // Insertion in Array UNsorted
         let insertionResult = insertAtLastKey([23, 10, 54, 46, 65, 76], 24);
         let insertAtIndexResult = insertAtIndex([23, 10, 54, 46, 65, 76], 3, 24);
+
+        // Insert in Sorted arrat
+
+        let insertItemInSortedArrayResults = insertItemInSortedArray([10, 20, 30, 40, 55, 65, 78, 90], 35)
 
         // Delete Operation
 
@@ -48,6 +53,8 @@ http
         console.log("deleteFromStart", deleteFromStartResults);
         console.log("deleteFromIndex", deleteFromIndexResults);
         console.log("deleteFromLast", deleteFromLastResult);
+
+        console.log("insertItemInSortedArray", insertItemInSortedArrayResults);
 
 
 

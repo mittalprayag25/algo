@@ -2,7 +2,7 @@ var http = require('http');
 const { reverse } = require('dns');
 
 http
-  .createServer(function(req, res) {
+  .createServer(function (req, res) {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end('val:' + createBasicTree());
   })

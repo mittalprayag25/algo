@@ -1,4 +1,5 @@
 export const reverseArray = (arr) => {
+    //['a', 'e', 'i', 'o', 'u'] => ['u', 'o', 'i', 'e', 'a']
     let start = 0;
     let end = arr.length - 1;
     while (start < end) {
